@@ -1,26 +1,31 @@
-import { Injectable } from '@nestjs/common';
-import { CreateIncomeDto } from './dto/create-income.dto.js';
-import { UpdateIncomeDto } from './dto/update-income.dto.js';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Income } from './income.schema';
+import { CreateIncomeDto } from './dto/create-income.dto';
+import { UpdateIncomeDto } from './dto/update-income.dto';
 
 @Injectable()
 export class IncomeService {
-  create(createIncomeDto: CreateIncomeDto) {
-    return 'This action adds a new income';
+  constructor(@InjectModel('Income') private incomeModel: Model<Income>) {}
+
+  create(userId: string, dto: CreateIncomeDto) {
+    return this.incomeModel.create({ ...dto, user: userId });
   }
 
-  findAll() {
-    return `This action returns all income`;
+  findAll(userId: string) {
+    return this.incomeModel.find({ user: userId }).sort({ date: -1 });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} income`;
+  async update(userId: string, id: string, dto: UpdateIncomeDto) {
+    const inc = await this.incomeModel.findOneAndUpdate({ _id: id, user: userId }, dto, { new: true });
+    if (!inc) throw new NotFoundException('Income not found');
+    return inc;
   }
 
-  update(id: number, updateIncomeDto: UpdateIncomeDto) {
-    return `This action updates a #${id} income`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} income`;
+  async remove(userId: string, id: string) {
+    const inc = await this.incomeModel.findOneAndDelete({ _id: id, user: userId });
+    if (!inc) throw new NotFoundException('Income not found');
+    return { deleted: true };
   }
 }
