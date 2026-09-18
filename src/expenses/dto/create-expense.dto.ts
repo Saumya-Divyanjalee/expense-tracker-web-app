@@ -1,4 +1,3 @@
-export class CreateExpenseDto {}
 import { IsString, IsNumber, IsDateString, IsOptional } from 'class-validator';
 
 export class CreateExpenseDto {
