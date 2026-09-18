@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Income } from './income.schema';
-import { CreateIncomeDto } from './dto/create-income.dto';
-import { UpdateIncomeDto } from './dto/update-income.dto';
+import { Income } from './income.schema.js';
+import { CreateIncomeDto } from './dto/create-income.dto.js';
+import { UpdateIncomeDto } from './dto/update-income.dto.js';
 
 @Injectable()
 export class IncomeService {
